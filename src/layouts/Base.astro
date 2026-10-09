@@ -29,16 +29,19 @@ const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
       <div class="wrap header-inner">
         <a class="logo" href="/">
           <img class="logo-mark" src="/favicon.svg" alt="" width="32" height="32" />
-          Bot Hut
+          <span>Bot Hut</span>
         </a>
-        <nav class="nav" aria-label="Principal">
-          <a href="/" aria-current={ruta === '/' ? 'page' : undefined}>Inicio</a>
-          <a href="/necesidades/" aria-current={ruta.startsWith('/necesidades') ? 'page' : undefined}>¿Qué necesitas?</a>
-          <a href="/bots/" aria-current={ruta.startsWith('/bots') ? 'page' : undefined}>Bots</a>
-          <a href="/que-es-un-agente" aria-current={ruta === '/que-es-un-agente' ? 'page' : undefined}>¿Qué es un agente?</a>
-          <a href="/acerca" aria-current={ruta === '/acerca' ? 'page' : undefined}>Acerca de</a>
-          <a class="btn" href={issueSugerirBot}>Sugerir un bot</a>
-        </nav>
+        <details class="nav-box">
+          <summary>Menú</summary>
+          <nav class="nav" aria-label="Principal">
+            <a href="/" aria-current={ruta === '/' ? 'page' : undefined}>Inicio</a>
+            <a href="/necesidades/" aria-current={ruta.startsWith('/necesidades') ? 'page' : undefined}>¿Qué necesitas?</a>
+            <a href="/bots/" aria-current={ruta.startsWith('/bots') ? 'page' : undefined}>Bots</a>
+            <a href="/que-es-un-agente/" aria-current={ruta === '/que-es-un-agente' ? 'page' : undefined}>¿Qué es un agente?</a>
+            <a href="/acerca/" aria-current={ruta === '/acerca' ? 'page' : undefined}>Acerca de</a>
+            <a class="btn" href={issueSugerirBot}>Sugerir un bot</a>
+          </nav>
+        </details>
       </div>
     </header>
     <main id="contenido">

@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bot Hut">
   <rect width="64" height="64" rx="14" fill="#24524a"/>
-  <text x="32" y="42" text-anchor="middle" font-size="32">=Ö</text>
+  <path fill="#f6f1e8" d="M32 13 L56 34 H50 V51 H14 V34 H8 Z"/>
+  <rect x="28" y="36" width="8" height="15" fill="#24524a"/>
+  <circle cx="24" cy="40" r="2.2" fill="#24524a"/>
+  <circle cx="40" cy="40" r="2.2" fill="#24524a"/>
 </svg>
