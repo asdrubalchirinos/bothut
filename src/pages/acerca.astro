@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import { issueSugerirBot, repoGithub } from '../lib/etiquetas';
+---
+
+<Base title="Acerca de" description="Quién hace Bot Hut, cómo se eligen los bots y cómo se revisan los datos.">
+  <article class="wrap prose">
+    <header class="ficha-head">
+      <p class="kicker">Transparencia</p>
+      <h1>Acerca de Bot Hut</h1>
+    </header>
+    <p>
+      Bot Hut nace del movimiento <a href="https://achirinos.com/es/personal-software/">Personal Software</a>.
+      Creemos que el futuro no pertenece solo a quienes programan. Pertenece a quienes resuelven.
+      Aquí explicamos, sin tecnicismos y en español, qué puede hacer cada bot y agente por ti, cuánto cuesta
+      y si está disponible en tu país.
+    </p>
+    <p>
+      Lo mantiene <strong>Asdrúbal Chirinos</strong>. Es un sitio pequeño, estático y público.
+      No hay cuentas de usuario ni base de datos.
+    </p>
+
+    <h2>Cómo se eligen los bots</h2>
+    <ul>
+      <li>Que una persona común pueda entender qué le resuelve.</li>
+      <li>Que haya una fuente oficial (sitio, ayuda o documentación) para precio, acceso y regiones.</li>
+      <li>Que aporte algo distinto a lo que ya está: chat de entrada, agente que actúa, o agente que instalas tú.</li>
+      <li>En el lanzamiento priorizamos agentes personales. ChatGPT y Gemini están porque mucha gente empieza ahí.</li>
+    </ul>
+    <p>
+      No hay fichas de “vibe coding” en este primer lote. Crear tu propia herramienta aparece como una necesidad
+      secundaria, con enlaces a guías externas.
+    </p>
+
+    <h2>Neutralidad</h2>
+    <p>
+      Cada ficha también dice para qué <em>no</em> sirve el bot. El orden de las recomendaciones sigue el problema
+      (correo, agenda, trámites), no un ranking de marcas. No hay enlaces de afiliado todavía.
+      Si en el futuro los hay, se dirá en esta página y junto al enlace.
+    </p>
+    <p>
+      Las marcas pertenecen a sus dueños. Usamos el nombre y el enlace oficial; no usamos logos sin permiso.
+    </p>
+
+    <h2>Cómo se revisan los datos</h2>
+    <p>
+      Cada ficha muestra <strong>Revisado: fecha</strong> y una lista de fuentes.
+      Los precios van en dólares de EE. UU., con la nota de que el precio local varía.
+      Si algo no se pudo comprobar (por ejemplo, un país concreto de Latinoamérica o el español de una interfaz),
+      la ficha lo dice. No inventamos.
+    </p>
+
+    <h2>Cómo se financia</h2>
+    <p>
+      Hoy no se financia con anuncios ni comisiones. Es un proyecto personal, publicado en un repositorio público.
+      Más adelante podrían aparecer afiliados con aviso, un boletín o talleres. Eso no debe cambiar el orden de las recomendaciones.
+    </p>
+
+    <h2>Sugerir un bot</h2>
+    <p>
+      Si usas un bot que falta, <a href={issueSugerirBot}>abre un issue en GitHub</a> (hace falta una cuenta gratis)
+      o, si sabes usar git, copia la <a href={`${repoGithub}/blob/main/plantillas/ficha.md`}>plantilla de ficha</a>
+      y manda un pull request. Las reglas están en
+      <a href={`${repoGithub}/blob/main/CONTRIBUTING.md`}>CONTRIBUTING.md</a>.
+      El mantenedor decide qué se publica.
+    </p>
+    <p>
+      Código del sitio: licencia MIT. Textos y fichas: <a href="https://creativecommons.org/licenses/by/4.0/deed.es">CC BY 4.0</a>.
+    </p>
+  </article>
+</Base>

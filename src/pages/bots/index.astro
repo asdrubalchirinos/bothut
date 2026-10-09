@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import BotCard from '../../components/BotCard.astro';
+import { grupoDeBot, grupoBot, issueSugerirBot } from '../../lib/etiquetas';
+
+const bots = await getCollection('bots');
+const ordenBots = ['chatgpt', 'gemini', 'grok-bot', 'dots', 'muse', 'openclaw', 'hermes-agent'];
+const ordenados = [...bots].sort((a, b) => ordenBots.indexOf(a.id) - ordenBots.indexOf(b.id));
+const grupos = ['empieza-aqui', 'agentes', 'mas-lejos'] as const;
+---
+
+<Base title="Todos los bots" description="Lista de bots y agentes personales revisados por Bot Hut, con filtro por región.">
+  <section class="wrap hero">
+    <p class="kicker">Directorio</p>
+    <h1>Todos los bots</h1>
+    <p class="lead">Siete fichas de lanzamiento. Elige tu región para ocultar lo que no llega a tu país. También puedes sugerir un bot que te haya servido.</p>
+    <div class="filter-bar" role="group" aria-label="Filtrar por región">
+      <button type="button" data-filtro="" aria-pressed="true">Todas</button>
+      <button type="button" data-filtro="espana_ue" aria-pressed="false">España / UE</button>
+      <button type="button" data-filtro="latinoamerica" aria-pressed="false">Latinoamérica</button>
+      <button type="button" data-filtro="eeuu" aria-pressed="false">EE. UU.</button>
+    </div>
+  </section>
+
+  {grupos.map((grupo) => (
+    <section class="wrap section">
+      <h2>{grupo === 'mas-lejos' ? '🔧 ' : ''}{grupoBot[grupo]}</h2>
+      <div class="card-grid">
+        {ordenados
+          .filter((bot) => grupoDeBot(bot.data.dificultad, bot.data.tipo) === grupo)
+          .map((bot) => <BotCard bot={bot} />)}
+      </div>
+    </section>
+  ))}
+
+  <p class="wrap"><a class="btn" href={issueSugerirBot}>Sugerir un bot</a></p>
+</Base>
+
+<script>
+  const clave = 'bothut-region';
+  const botones = document.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+  const selector = document.getElementById('selector-region');
+
+  function pintar(region: string) {
+    botones.forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(btn.dataset.filtro === region));
+    });
+    if (selector instanceof HTMLSelectElement) selector.value = region;
+    document.body.dataset.region = region;
+    document.querySelectorAll<HTMLElement>('[data-region-item]').forEach((el) => {
+      const valor = region ? (el.getAttribute(`data-${region}`) ?? 'si') : 'si';
+      el.classList.toggle('hidden', Boolean(region) && valor === 'no');
+    });
+  }
+
+  const inicial = localStorage.getItem(clave) ?? '';
+  pintar(inicial);
+
+  botones.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const region = btn.dataset.filtro ?? '';
+      localStorage.setItem(clave, region);
+      pintar(region);
+    });
+  });
+</script>

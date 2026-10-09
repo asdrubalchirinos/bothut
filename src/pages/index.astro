@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import BotCard from '../components/BotCard.astro';
+import { grupoDeBot, grupoNecesidad, issueSugerirBot } from '../lib/etiquetas';
+
+const bots = await getCollection('bots');
+const necesidades = await getCollection('necesidades');
+
+const ordenBots = ['chatgpt', 'gemini', 'grok-bot', 'dots', 'muse', 'openclaw', 'hermes-agent'];
+const ordenados = [...bots].sort((a, b) => ordenBots.indexOf(a.id) - ordenBots.indexOf(b.id));
+
+const empieza = ordenados.filter((bot) => grupoDeBot(bot.data.dificultad, bot.data.tipo) === 'empieza-aqui');
+const agentes = ordenados.filter((bot) => grupoDeBot(bot.data.dificultad, bot.data.tipo) === 'agentes');
+const masLejos = ordenados.filter((bot) => grupoDeBot(bot.data.dificultad, bot.data.tipo) === 'mas-lejos');
+
+const grupos = ['dia-a-dia', 'trabajo', 'mas-lejos'] as const;
+---
+
+<Base title="Bot Hut" description="Descubre lo que los bots pueden hacer por ti. Elige una necesidad y te mostramos qué bot o agente te conviene.">
+  <section class="wrap hero">
+    <p class="kicker">Bot Hut</p>
+    <h1>Descubre lo que los bots pueden hacer por ti.</h1>
+    <p class="lead">
+      Una guía en español para usar bots y agentes personales en el día a día:
+      qué pueden hacer, cuánto cuestan y si llegan a tu país.
+    </p>
+  </section>
+
+  <section class="wrap section">
+    <h2>¿Qué quieres que un bot haga por ti?</h2>
+    <div class="need-tools">
+      <label class="visually-hidden" for="filtro-necesidades">Filtrar necesidades</label>
+      <input id="filtro-necesidades" type="search" placeholder="Escribe: correo, agenda, WhatsApp…" autocomplete="off" />
+    </div>
+    {grupos.map((grupo) => (
+      <div class="need-group" data-grupo={grupo}>
+        <h3>{grupoNecesidad[grupo]}</h3>
+        <div class="need-grid">
+          {necesidades
+            .filter((n) => n.data.grupo === grupo)
+            .map((n) => (
+              <a class="need-btn" href={`/necesidades/${n.id}/`} data-need-text={`${n.data.titulo} ${n.data.resumen}`}>
+                <strong>{n.data.titulo}</strong>
+                <br />
+                <small>{n.data.resumen}</small>
+              </a>
+            ))}
+        </div>
+      </div>
+    ))}
+    <p id="sin-resultados" class="muted hidden">No hay una necesidad con esas palabras. Prueba con otra o mira <a href="/necesidades/">todas las necesidades</a>.</p>
+  </section>
+
+  <section class="wrap section">
+    <h2>Empieza aquí</h2>
+    <p class="muted">Bots de chat conocidos. Sirven para escribir, preguntar y entender. No hacen trámites por ti.</p>
+    <div class="card-grid">
+      {empieza.map((bot) => <BotCard bot={bot} />)}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2>Agentes que trabajan por ti</h2>
+    <p class="muted">Estos ya no solo responden: investigan, organizan y actúan. Revisa si están en tu país y qué piden a cambio.</p>
+    <div class="card-grid">
+      {agentes.map((bot) => <BotCard bot={bot} />)}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2>🔧 Para ir más lejos</h2>
+    <p class="muted">Agentes que instalas tú. Más control, más responsabilidad. No son para empezar.</p>
+    <div class="card-grid">
+      {masLejos.map((bot) => <BotCard bot={bot} />)}
+    </div>
+    <p>
+      <a class="btn btn-ghost" href={issueSugerirBot}>Sugerir un bot</a>
+      <a class="btn-ghost" href="/bots/">Ver todos los bots</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  h3 {
+    margin: 1.4rem 0 0.6rem;
+    font-size: 1.1rem;
+  }
+</style>
+
+<script>
+  const campo = document.getElementById('filtro-necesidades');
+  const vacio = document.getElementById('sin-resultados');
+  const botones = document.querySelectorAll<HTMLElement>('[data-need-text]');
+  const grupos = document.querySelectorAll<HTMLElement>('.need-group');
+
+  campo?.addEventListener('input', () => {
+    const q = campo instanceof HTMLInputElement ? campo.value.trim().toLowerCase() : '';
+    botones.forEach((el) => {
+      const texto = el.getAttribute('data-need-text')?.toLowerCase() ?? '';
+      el.classList.toggle('hidden', Boolean(q) && !texto.includes(q));
+    });
+    grupos.forEach((grupo) => {
+      const visibles = grupo.querySelectorAll('[data-need-text]:not(.hidden)');
+      grupo.classList.toggle('hidden', Boolean(q) && visibles.length === 0);
+    });
+    const alguno = document.querySelectorAll('[data-need-text]:not(.hidden)').length;
+    vacio?.classList.toggle('hidden', alguno > 0);
+  });
+</script>

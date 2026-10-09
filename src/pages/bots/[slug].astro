@@ -1,0 +1,110 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Disponibilidad from '../../components/Disponibilidad.astro';
+import {
+  dificultadEtiqueta,
+  fechaLarga,
+  grupoBot,
+  grupoDeBot,
+  plataformaEtiqueta,
+  siNoEtiqueta,
+  tipoEtiqueta,
+} from '../../lib/etiquetas';
+
+export async function getStaticPaths() {
+  const bots = await getCollection('bots');
+  return bots.map((bot) => ({ params: { slug: bot.id }, props: { bot } }));
+}
+
+const { bot } = Astro.props;
+const { Content } = await render(bot);
+const todos = await getCollection('bots');
+const grupo = grupoDeBot(bot.data.dificultad, bot.data.tipo);
+const alternativas = bot.data.alternativas
+  .map((id) => todos.find((otro) => otro.id === id))
+  .filter((otro) => otro !== undefined);
+---
+
+<Base title={bot.data.nombre} description={bot.data.resumen}>
+  <article class="wrap">
+    <header class="ficha-head">
+      <p class="kicker">{bot.data.empresa}</p>
+      <h1>{bot.data.nombre}</h1>
+      <p class="lead">{bot.data.resumen}</p>
+      <div class="meta-row">
+        <span class="badge">{tipoEtiqueta[bot.data.tipo]}</span>
+        <span class="badge">{grupoBot[grupo]}</span>
+        <span class="badge">Dificultad: {dificultadEtiqueta[bot.data.dificultad]}</span>
+        {bot.data.aviso && <span class="badge badge-warn">{bot.data.aviso}</span>}
+      </div>
+      <Disponibilidad disponibilidad={bot.data.disponibilidad} />
+      <p class="muted">Revisado: {fechaLarga(bot.data.revisado)}</p>
+    </header>
+
+    {bot.data.dificultad === 'avanzada' && (
+      <div class="banner banner-avanzada" role="note">
+        <strong>Esto no es para empezar.</strong>
+        Si nunca has usado una terminal, prueba primero
+        <a href="/bots/chatgpt/">ChatGPT</a>,
+        <a href="/bots/gemini/">Gemini</a> o
+        <a href="/bots/grok-bot/">Grok Bot</a>.
+      </div>
+    )}
+
+    {bot.data.aviso && (
+      <div class="banner" role="note">
+        <strong>{bot.data.aviso}.</strong> {bot.data.disponibilidad.notas}
+      </div>
+    )}
+
+    <div class="ficha-body">
+      <div class="prose">
+        <Content />
+        {alternativas.length > 0 && (
+          <p>
+            En este sitio también hay ficha de:
+            {alternativas.map((otro, i) => (
+              <>
+                {i > 0 && ', '}
+                <a href={`/bots/${otro.id}/`}>{otro.data.nombre}</a>
+              </>
+            ))}
+            .
+          </p>
+        )}
+        <h2>Fuentes</h2>
+        <ul>
+          {bot.data.fuentes.map((fuente) => (
+            <li><a href={fuente}>{fuente}</a></li>
+          ))}
+        </ul>
+      </div>
+      <aside class="side">
+        <h2>De un vistazo</h2>
+        <dl>
+          <dt>Precio de referencia</dt>
+          <dd>{bot.data.precio.resumen}</dd>
+          <dt>Nota</dt>
+          <dd>{bot.data.precio.nota}</dd>
+          <dt>Cuenta</dt>
+          <dd>{bot.data.requiere_cuenta ? 'Sí' : 'No es obligatoria'}</dd>
+          <dt>Dónde se usa</dt>
+          <dd>{bot.data.plataformas.map((p) => plataformaEtiqueta[p] ?? p).join(', ')}</dd>
+          <dt>Español</dt>
+          <dd>{siNoEtiqueta[bot.data.espanol]}</dd>
+          <dt>Actúa por ti</dt>
+          <dd>{siNoEtiqueta[bot.data.actua_por_ti]}</dd>
+          <dt>Pide permiso</dt>
+          <dd>{siNoEtiqueta[bot.data.pide_permiso]}</dd>
+          <dt>Código abierto</dt>
+          <dd>{bot.data.codigo_abierto ? 'Sí' : 'No'}</dd>
+          <dt>Se instala en tu equipo</dt>
+          <dd>{bot.data.se_instala_en_tu_equipo ? 'Sí' : 'No'}</dd>
+          <dt>Sitio oficial</dt>
+          <dd><a href={bot.data.url}>{bot.data.url.replace(/^https?:\/\//, '')}</a></dd>
+        </dl>
+      </aside>
+    </div>
+  </article>
+</Base>

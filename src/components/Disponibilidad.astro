@@ -1,0 +1,28 @@
+---
+import { regionEtiqueta, siNoEtiqueta } from '../lib/etiquetas';
+
+interface Props {
+  disponibilidad: {
+    espana_ue: 'si' | 'parcial' | 'no';
+    latinoamerica: 'si' | 'parcial' | 'no';
+    eeuu: 'si' | 'parcial' | 'no';
+    notas?: string;
+  };
+}
+
+const { disponibilidad } = Astro.props;
+const regiones = ['espana_ue', 'latinoamerica', 'eeuu'] as const;
+---
+
+<div class="regions" role="list" aria-label="Disponibilidad por región">
+  {regiones.map((clave) => (
+    <span
+      class={`region ${disponibilidad[clave]}`}
+      data-region-mark={clave}
+      role="listitem"
+    >
+      {regionEtiqueta[clave]}: {siNoEtiqueta[disponibilidad[clave]]}
+    </span>
+  ))}
+</div>
+{disponibilidad.notas && <p class="muted"><small>{disponibilidad.notas}</small></p>}

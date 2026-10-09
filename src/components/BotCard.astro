@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Disponibilidad from './Disponibilidad.astro';
+import { grupoDeBot, grupoBot, dificultadEtiqueta } from '../lib/etiquetas';
+
+interface Props {
+  bot: CollectionEntry<'bots'>;
+}
+
+const { bot } = Astro.props;
+const grupo = grupoDeBot(bot.data.dificultad, bot.data.tipo);
+---
+
+<a
+  class="card"
+  href={`/bots/${bot.id}/`}
+  data-region-item
+  data-espana_ue={bot.data.disponibilidad.espana_ue}
+  data-latinoamerica={bot.data.disponibilidad.latinoamerica}
+  data-eeuu={bot.data.disponibilidad.eeuu}
+>
+  <p>
+    <span class="badge">{grupoBot[grupo]}</span>
+    {bot.data.aviso && <span class="badge badge-warn">{bot.data.aviso}</span>}
+    {bot.data.dificultad === 'avanzada' && <span class="badge">🔧 Avanzada</span>}
+  </p>
+  <h3>{bot.data.nombre}</h3>
+  <p class="muted">{bot.data.empresa} · {dificultadEtiqueta[bot.data.dificultad]}</p>
+  <p>{bot.data.resumen}</p>
+  <p><small>{bot.data.precio.resumen}</small></p>
+  <Disponibilidad disponibilidad={bot.data.disponibilidad} />
+</a>
