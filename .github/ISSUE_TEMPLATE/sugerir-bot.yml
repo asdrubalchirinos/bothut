@@ -1,0 +1,69 @@
+name: Sugerir un bot
+description: Propón un bot o agente para que lo revisemos. Hace falta una cuenta gratis de GitHub.
+title: "[Bot] "
+labels: ["sugerir-bot"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias. Cuéntanos qué bot usas y para qué. El mantenedor decide si entra al sitio.
+        Si puedes, adjunta enlaces oficiales de precio y disponibilidad.
+  - type: input
+    id: nombre
+    attributes:
+      label: Nombre del bot
+      description: Como lo conoce la gente.
+      placeholder: Ejemplo, Perplexity
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Dirección oficial
+      description: Sitio o página de ayuda del producto.
+      placeholder: https://
+    validations:
+      required: true
+  - type: textarea
+    id: uso
+    attributes:
+      label: ¿Para qué lo usas?
+      description: El problema que te resuelve, en pocas frases. Sin datos personales de otras personas.
+      placeholder: Lo uso para resumir noticias de mi rubro cada mañana…
+    validations:
+      required: true
+  - type: dropdown
+    id: disponibilidad
+    attributes:
+      label: ¿Dónde lo has podido usar?
+      options:
+        - España / Unión Europea
+        - Latinoamérica
+        - Estados Unidos
+        - En más de una de esas regiones (explícalo abajo)
+        - No lo sé
+        - Otra
+    validations:
+      required: true
+  - type: textarea
+    id: detalle_disponibilidad
+    attributes:
+      label: Detalle de país o región
+      description: Si hace falta, di el país y si pedía VPN, edad u otra condición.
+  - type: textarea
+    id: fuentes
+    attributes:
+      label: Fuentes
+      description: Enlaces de precios, países o instrucciones oficiales. Si no los tienes, dilo.
+      placeholder: https://…
+    validations:
+      required: true
+  - type: checkboxes
+    id: reglas
+    attributes:
+      label: Confirmaciones
+      options:
+        - label: La información se puede comprobar y no es un anuncio pagado.
+          required: true
+        - label: Entiendo que el mantenedor decide si se publica y cómo se redacta la ficha.
+          required: true

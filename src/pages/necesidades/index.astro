@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { grupoNecesidad } from '../../lib/etiquetas';
+
+const necesidades = await getCollection('necesidades');
+const grupos = ['dia-a-dia', 'trabajo', 'mas-lejos'] as const;
+---
+
+<Base title="¿Qué necesitas?" description="Elige lo que quieres resolver y te mostramos qué bots o agentes encajan.">
+  <section class="wrap hero">
+    <p class="kicker">Necesidades</p>
+    <h1>¿Qué quieres que un bot haga por ti?</h1>
+    <p class="lead">Empieza por el problema, no por la marca. Cada página recomienda bots en orden, con lo que sí pueden hacer y lo que no.</p>
+  </section>
+  {grupos.map((grupo) => (
+    <section class="wrap section">
+      <h2>{grupo === 'mas-lejos' ? '🔧 ' : ''}{grupoNecesidad[grupo]}</h2>
+      <div class="need-grid">
+        {necesidades
+          .filter((n) => n.data.grupo === grupo)
+          .map((n) => (
+            <a class="need-btn" href={`/necesidades/${n.id}/`}>
+              <strong>{n.data.titulo}</strong>
+              <br />
+              <small>{n.data.resumen}</small>
+            </a>
+          ))}
+      </div>
+    </section>
+  ))}
+</Base>

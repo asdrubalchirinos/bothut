@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import { issueSugerirBot } from '../lib/etiquetas';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Descubre lo que los bots pueden hacer por ti. Guías en español para usar bots y agentes personales en el día a día.' } = Astro.props;
+const pagina = title === 'Bot Hut' ? 'Bot Hut' : `${title} · Bot Hut`;
+const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#24524a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <title>{pagina}</title>
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="logo" href="/">
+          <img class="logo-mark" src="/favicon.svg" alt="" width="32" height="32" />
+          <span>Bot Hut</span>
+        </a>
+        <details class="nav-box">
+          <summary>Menú</summary>
+          <nav class="nav" aria-label="Principal">
+            <a href="/" aria-current={ruta === '/' ? 'page' : undefined}>Inicio</a>
+            <a href="/necesidades/" aria-current={ruta.startsWith('/necesidades') ? 'page' : undefined}>¿Qué necesitas?</a>
+            <a href="/bots/" aria-current={ruta.startsWith('/bots') ? 'page' : undefined}>Bots</a>
+            <a href="/que-es-un-agente/" aria-current={ruta === '/que-es-un-agente' ? 'page' : undefined}>¿Qué es un agente?</a>
+            <a href="/acerca/" aria-current={ruta === '/acerca' ? 'page' : undefined}>Acerca de</a>
+            <a class="btn" href={issueSugerirBot}>Sugerir un bot</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="contenido">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <div>
+          <p><strong>Bot Hut</strong> · Descubre lo que los bots pueden hacer por ti.</p>
+          <p>
+            Código: <a href="https://opensource.org/licenses/MIT">MIT</a>.
+            Contenido: <a href="https://creativecommons.org/licenses/by/4.0/deed.es">CC BY 4.0</a>.
+            Sin rastreadores.
+          </p>
+        </div>
+        <label class="region-select">
+          Tu región
+          <select id="selector-region" autocomplete="off">
+            <option value="">Todas</option>
+            <option value="espana_ue">España / UE</option>
+            <option value="latinoamerica">Latinoamérica</option>
+            <option value="eeuu">EE. UU.</option>
+          </select>
+        </label>
+      </div>
+    </footer>
+    <script>
+      const clave = 'bothut-region';
+      const selector = document.getElementById('selector-region');
+      if (selector instanceof HTMLSelectElement) {
+        const guardada = localStorage.getItem(clave) ?? '';
+        selector.value = guardada;
+        aplicar(guardada);
+        selector.addEventListener('change', () => {
+          localStorage.setItem(clave, selector.value);
+          aplicar(selector.value);
+        });
+      }
+
+      function aplicar(region: string) {
+        document.body.dataset.region = region;
+        document.querySelectorAll<HTMLElement>('[data-region-item]').forEach((el) => {
+          const valor = el.getAttribute(`data-${region}`) ?? 'si';
+          el.classList.toggle('hidden', Boolean(region) && valor === 'no');
+        });
+        document.querySelectorAll<HTMLElement>('[data-region-mark]').forEach((el) => {
+          el.classList.toggle('activa', Boolean(region) && el.getAttribute('data-region-mark') === region);
+        });
+      }
+    </script>
+  </body>
+</html>
